@@ -1,4 +1,4 @@
-# kambista-nuxt
+# laboratoria-js-teacher-test
 
 > Nuxt.js project
 
