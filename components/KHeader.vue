@@ -35,7 +35,7 @@ export default {
     position: fixed;
     top: 0;
     z-index: 1020;
-    background: #182233;
+    background: #504913;
 }
 
 .app-footer, .app-header {

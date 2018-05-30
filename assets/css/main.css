@@ -363,16 +363,16 @@ ul {
     opacity: .65;
 }
 
-.non-darkblue {
+.non-darkyellow{
     color: #fff;
     margin-top: 4rem;
     min-height: 95vh;
     background-color:#f0f0f0;
 }
 
-.darkblue {
+.darkyellow {
     color: #fff;
-    background-color: #242f42;
+    background-color: #504913;
     margin-top: 0;
 }
 
