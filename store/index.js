@@ -1,5 +1,5 @@
 import axios from 'axios'
-import api, { logout, createPost, fetchFeed } from '@/services/api'
+import api, { logout, createPost, fetchFeed, savePost } from '@/services/api'
 const baseURL = 'http://localhost:4000/v1'
 
 export const state = () => ({
@@ -61,6 +61,17 @@ export const actions = {
     try {
       const { data } = await fetchFeed()
       commit('SET_FEED', data)
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        throw new Error('Bad credentials')
+      }
+      throw error
+    }
+  },
+  async savePost ({ commit }, post) {
+    try {
+      const { data } = await savePost(post)
+      return data
     } catch (error) {
       if (error.response && error.response.status === 401) {
         throw new Error('Bad credentials')

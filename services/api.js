@@ -103,7 +103,18 @@ export const createPost = async (post) => {
 
 export const fetchFeed = async () => {
   let rs = null
-  await api.get('posts').then(response => rs = response)
+  await api.get('posts?filter[order]=created_date%20DESC').then(response => rs = response)
+      .catch(error => {
+        if (error.response) {
+          rs = error.response
+        }
+      })
+  return rs
+}
+
+export const savePost = async (post) => {
+  let rs = null
+  await api.put(`customers/me/posts/${post.id}`, post).then(response => rs = response)
       .catch(error => {
         if (error.response) {
           rs = error.response

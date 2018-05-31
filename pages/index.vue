@@ -30,8 +30,29 @@
                 <button type="button" class="btn btn-outline b-info" @click="filterPosts('public')">Público</button>
               </div>
               <div class="box-body">
-                <ul class="list-group no-radius no-borders">
-                                    
+                <ul class="list-group no-radius no-borders list-of-posts">
+                  <li class="post-container" v-for="post in posts" id="post.id">
+                    <div class="post-content">
+                      <template v-if="post.is_image">
+                        <img :src="post.message">
+                      </template>
+                      <template v-else>
+                        <div class="post-message" v-if="editing !== post.id">{{post.message}}</div>
+                        <textarea class="post-editing" v-else v-model.trim="postEditing.message">{{post.message}}</textarea>
+                        <div class="post-date">{{ fromNowDate(post.created_date) }}</div>
+                        <div class="post-actions">
+                          <template v-if="editing !== post.id">
+                            <button @click="editPost(post)" class="btn">Editar</button>
+                            <button @click="deletePost(post.id)" class="btn">Eliminar</button>
+                          </template>
+                          <template v-else>
+                            <button @click="savePost()" class="btn">Guardar</button>
+                          </template>
+                          <div class="post-scope">{{ post.scope === 0 ? 'Público' : 'Amigos' }}</div>
+                        </div>
+                      </template>
+                    </div>
+                  </li>           
                 </ul>
               </div>
             </div>
@@ -43,6 +64,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import topbar from '@/components/KHeader'
 export default {
   name: 'admin',
@@ -58,20 +80,75 @@ export default {
         message: '',
         scope: 0,
         is_image: false
-      }
+      },
+      editing: '',
+      postEditing: null
     }
   },
-  created () {},
+  created () {
+    this.fetchFeed()
+  },
   methods: {
+    async fetchFeed () {
+      this.$store.dispatch('fetchFeed')
+    },
     async newPost () {
       this.post.created_date = Date()
       const res = await this.$store.dispatch('createPost', this.post)
-      if (!res.response) this.$store.dispatch('fetchFeed')
+      if (!res.response) this.fetchFeed()
+    },
+    fromNowDate (date) {
+      return moment(date).locale('es').fromNow(true)
+    },
+    editPost (post) {
+      this.editing = post.id
+      this.postEditing = post
+    },
+    async savePost () {
+      const res = await this.$store.dispatch('savePost', this.postEditing)
+      this.postEditing = null
+      this.editing = ''
+      if (!res.response) this.fetchFeed()
     }
   }
 }
 </script>
 <style scoped>
+.post-container {
+  border: solid 1px #c0c0c0;
+  border-radius: 4px;
+  padding: .3rem;
+  margin-bottom: .5rem;
+  background-color: #f0f0f0ab;
+}
+.post-container .post-content .post-message {
+  min-height: 3rem;
+  max-height: 6rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: #ffffff;
+  border-radius: 4px;
+  padding: .2rem;
+  font-weight: 500;
+}
+.post-container .post-content .post-date {
+  font-size: 9pt;
+  font-style: italic;
+  text-align: end;
+  padding: .2rem 0;
+}
+.post-container .post-content .post-scope {
+  float: right;
+  font-size: 9pt;
+  color: cadetblue;
+}
+.post-container .post-content .post-actions > .btn {
+    margin-right: 0.2rem;
+}
+.post-container .post-content .post-editing {
+  width: 100%;
+  max-height: 3rem;
+}
 input, select { 
   min-width: 0;
 }
@@ -116,6 +193,7 @@ ul {
 }
 .btn {
   padding: .5rem;
+  font-size: 9pt;
 }
 .b-info {
     border-color: #00e3c2;
