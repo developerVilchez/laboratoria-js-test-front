@@ -26,12 +26,13 @@
                 <div class="box-divider m-a-0"></div>
               </div>
               <div class="btn-group toggle-kind-of-ops">
-                <button type="button" class="btn btn-outline b-info" @click="filterPosts('friends')">Amigos</button>
-                <button type="button" class="btn btn-outline b-info" @click="filterPosts('public')">Público</button>
+                <button type="button" class="btn btn-outline b-info" :class="{'active': filter === null}" @click="filter = null">Todos</button>
+                <button type="button" class="btn btn-outline b-info" :class="{'active': filter === 0}" @click="filter = 0">Público</button>
+                <button type="button" class="btn btn-outline b-info" :class="{'active': filter === 1}" @click="filter = 1">Amigos</button>
               </div>
               <div class="box-body">
                 <ul class="list-group no-radius no-borders list-of-posts">
-                  <li class="post-container" v-for="post in posts" id="post.id">
+                  <li class="post-container" v-for="post in getFeed" id="post.id">
                     <div class="post-content">
                       <template v-if="post.is_image">
                         <img :src="post.message">
@@ -82,20 +83,41 @@ export default {
         is_image: false
       },
       editing: '',
-      postEditing: null
+      postEditing: null,
+      filter: null
     }
   },
   created () {
-    this.fetchFeed()
+    this.$store.dispatch('fetchFeed')
+  },
+  watch: {
+    filter: async function (val) {
+      switch (val) {
+        case null:
+          this.posts = this.$store.state.feed
+          break
+        case 0:
+          this.posts = this.$store.state.feed.filter(el => el.scope === 0)
+          break
+        case 1:
+          this.posts = this.$store.state.feed.filter(el => el.scope === 1)
+          break
+      }
+    }
+  },
+  computed: {
+    getFeed () {
+      return this.posts
+    }
   },
   methods: {
-    async fetchFeed () {
-      this.$store.dispatch('fetchFeed')
-    },
     async newPost () {
       this.post.created_date = Date()
       const res = await this.$store.dispatch('createPost', this.post)
-      if (!res.response) this.fetchFeed()
+      if (!res.response) {
+        await this.$store.dispatch('fetchFeed')
+        this.posts = this.$store.state.feed
+      }
     },
     fromNowDate (date) {
       return moment(date).locale('es').fromNow(true)
