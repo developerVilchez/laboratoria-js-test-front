@@ -123,5 +123,28 @@ export const savePost = async (post) => {
   return rs
 }
 
+export const uploadImage = (file) => {
+  let url = process.env.NODE_ENV !== 'production' ? 'http://localhost:4000/v1/containers/kambista/upload' : 'https://kambista-v2.herokuapp.com/v1/containers/kambista/upload'
+  if (process.browser) {
+    return new Promise((resolve, reject) => {
+      let xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP")
+      xmlhttp.onreadystatechange = () => {
+        if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+          if (xmlhttp.status == 200) {
+            // resolve instead of return inside of a Promise closure
+            resolve(JSON.parse(xmlhttp.response))
+          } else {
+            // reject instead of throw
+            // (will throw the error at the `await` expression.)
+            reject(Error(`Received status code ${xmlhttp.status}`))
+          }
+        }
+      }
+      xmlhttp.open('POST', url, true)
+      xmlhttp.send(file)
+    })
+  }
+}
+
 export default api
 

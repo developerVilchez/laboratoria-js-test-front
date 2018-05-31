@@ -8,16 +8,19 @@
             <div class="box text-color-gray">
               <div class="box-header">
                 <h2>Feed</h2><br>
-                <form class="navbar-form form-inline v-m"  v-on:submit.prevent="newPost" role="search">
+                <form enctype="multipart/form-data" class="navbar-form form-inline v-m"  v-on:submit.prevent="" role="search">
                   <div class="form-group l-h m-a-0">
                     <div class="input-group">
-                      <textarea v-model.trim="post.message" class="form-control form-control-sm b-a radius" placeholder="¿Qué está pasando?"></textarea>
+                      <textarea v-if="!is_image" v-model.trim="post.message" class="form-control form-control-sm b-a radius" placeholder="¿Qué está pasando?"></textarea>
+                      <input v-else type="file" class="form-control" name="file" placeholder="Adjuntar archivo" accept="image/*" ref="image" @change="onFileChange($event)">    
                       <div class="control-btns">
+                        <div class="set_image"><input type="checkbox" v-model="is_image">Imagen</div>
                         <select v-model="post.scope" class="select-scope radius">
                           <option :value="0">Público</option>
                           <option :value="1">Amigos</option>
                         </select>
-                        <input class="radius orange publishing-btn" type="submit" value="Publicar">
+                        <input v-if="!is_image" class="radius orange publishing-btn" type="submit" @click="newPost()" value="Publicar">
+                        <input v-else class="radius orange publishing-btn" type="submit" @click="saveImage()" value="Publicar">
                       </div>
 
                     </div>
@@ -35,7 +38,19 @@
                   <li class="post-container" v-for="post in getFeed" id="post.id">
                     <div class="post-content">
                       <template v-if="post.is_image">
-                        <img :src="post.message">
+                        <img v-if="editing !== post.id" :src="post.message">
+                        <input v-else type="file" class="form-control" name="updateImg" placeholder="Adjuntar archivo" accept="image/*" ref="image" @change="onFileChange($event)">   
+                        <div class="post-date">{{ fromNowDate(post.created_date) }}</div>
+                        <div class="post-actions">
+                          <template v-if="editing !== post.id">
+                            <button @click="editPost(post)" class="btn">Editar</button>
+                            <button @click="deletePost(post.id)" class="btn">Eliminar</button>
+                          </template>
+                          <template v-else>
+                            <button @click="updateImage()" class="btn">Guardar</button>
+                          </template>
+                          <div class="post-scope">{{ post.scope === 0 ? 'Público' : 'Amigos' }}</div>
+                        </div>
                       </template>
                       <template v-else>
                         <div class="post-message" v-if="editing !== post.id">{{post.message}}</div>
@@ -66,6 +81,7 @@
 
 <script>
 import moment from 'moment'
+import { uploadImage } from '@/services/api'
 import topbar from '@/components/KHeader'
 export default {
   name: 'admin',
@@ -84,7 +100,9 @@ export default {
       },
       editing: '',
       postEditing: null,
-      filter: null
+      filter: null,
+      is_image: false,
+      image: process.browser ? new FormData() : null
     }
   },
   created () {
@@ -103,6 +121,9 @@ export default {
           this.posts = this.$store.state.feed.filter(el => el.scope === 1)
           break
       }
+    },
+    is_image: function (val) {
+      this.post.is_image = val
     }
   },
   computed: {
@@ -130,7 +151,41 @@ export default {
       const res = await this.$store.dispatch('savePost', this.postEditing)
       this.postEditing = null
       this.editing = ''
-      if (!res.response) this.fetchFeed()
+      if (!res.response) await this.$store.dispatch('fetchFeed')
+    },
+    onFileChange (e) {
+      let files = e.target.files || e.dataTransfer.files
+      if (!files.length) {
+        return
+      }
+      this.image.append('file', files[0])
+    },
+    async saveImage () {
+      const f = await this.uploadImage()
+      if (f !== false) {
+        this.post.message = f
+        this.newPost()
+      }
+    },
+    async updateImage () {
+      const f = await this.uploadImage()
+      if (f !== false) {
+        this.postEditing.message = f
+        this.savePost()
+      }
+    },
+    async uploadImage () {
+      const rs = await uploadImage(this.image)
+      this.removeFile()
+      if (rs.result && rs.result.files.file.length > 0) {
+        return rs.result.files.file[0].providerResponse.location
+      } else {
+        return false
+      }
+    },
+    removeFile: function (e) {
+      this.$el.querySelector('input[type=file]').value = null
+      this.image = new FormData()
     }
   }
 }
@@ -142,6 +197,9 @@ export default {
   padding: .3rem;
   margin-bottom: .5rem;
   background-color: #f0f0f0ab;
+}
+.post-container .post-content img {
+  max-width: 100%;
 }
 .post-container .post-content .post-message {
   min-height: 3rem;
@@ -196,6 +254,13 @@ textarea {
   flex-flow: row;
   justify-content: flex-end;
   margin-top: .5rem;
+}
+.control-btns .set_image {
+  display: flex;
+  flex: 1;
+  max-width: 4rem;
+  margin-right: auto;
+  align-items: center;
 }
 .control-btns > * {
   margin-left: 5px !important;
