@@ -8,7 +8,7 @@
             <div class="box text-color-gray">
               <div class="box-header">
                 <h2>Feed</h2><br>
-                <form class="navbar-form form-inline v-m" role="search">
+                <form class="navbar-form form-inline v-m"  v-on:submit.prevent="newPost" role="search">
                   <div class="form-group l-h m-a-0">
                     <div class="input-group">
                       <textarea v-model.trim="post.message" class="form-control form-control-sm b-a radius" placeholder="¿Qué está pasando?"></textarea>
@@ -53,14 +53,22 @@ export default {
   },
   data () {
     return {
-      posts: [],
+      posts: this.$store.state.feed,
       post: {
         message: '',
-        scope: 0
+        scope: 0,
+        is_image: false
       }
     }
   },
-  created () {}
+  created () {},
+  methods: {
+    async newPost () {
+      this.post.created_date = Date()
+      const res = await this.$store.dispatch('createPost', this.post)
+      if (!res.response) this.$store.dispatch('fetchFeed')
+    }
+  }
 }
 </script>
 <style scoped>

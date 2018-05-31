@@ -1,9 +1,10 @@
 import axios from 'axios'
-import api, { logout } from '@/services/api'
+import api, { logout, createPost, fetchFeed } from '@/services/api'
 const baseURL = 'http://localhost:4000/v1'
 
 export const state = () => ({
-  authUser: null
+  authUser: null,
+  feed: []
 })
 
 export const mutations = {
@@ -12,6 +13,12 @@ export const mutations = {
   },
   GET_USER: function (state, user) {
     return state.authUser
+  },
+  SET_FEED: function (state, feed) {
+    state.feed = feed
+  },
+  GET_FEED: function (state) {
+    return state.feed
   }
 }
 
@@ -33,12 +40,32 @@ export const actions = {
       throw error
     }
   },
-
   async logout ({ commit }) {
     await logout()
     commit('SET_USER', null)
     localStorage.removeItem('Auth')
     this.$router.replace({ path: '/login' })
+  },
+  async createPost ({ commit }, post) {
+    try {
+      const { data } = await createPost(post)
+      return data
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        throw new Error('Bad credentials')
+      }
+      throw error
+    }
+  },
+  async fetchFeed ({ commit }) {
+    try {
+      const { data } = await fetchFeed()
+      commit('SET_FEED', data)
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        throw new Error('Bad credentials')
+      }
+      throw error
+    }
   }
-
 }

@@ -90,5 +90,27 @@ export const logout = async () => {
   return rs
 }
 
+export const createPost = async (post) => {
+  let rs = null
+  await api.post('customers/me/posts', post).then(response => rs = response)
+      .catch(error => {
+        if (error.response) {
+          rs = error.response
+        }
+      })
+  return rs
+}
+
+export const fetchFeed = async () => {
+  let rs = null
+  await api.get('posts').then(response => rs = response)
+      .catch(error => {
+        if (error.response) {
+          rs = error.response
+        }
+      })
+  return rs
+}
+
 export default api
 
