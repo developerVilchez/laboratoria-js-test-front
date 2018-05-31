@@ -123,6 +123,10 @@ export const savePost = async (post) => {
   return rs
 }
 
+export const deletePost = async (id) => {
+  return await api.delete(`customers/me/posts/${id}`)
+}
+
 export const uploadImage = (file) => {
   let url = process.env.NODE_ENV !== 'production' ? 'http://localhost:4000/v1/containers/kambista/upload' : 'https://kambista-v2.herokuapp.com/v1/containers/kambista/upload'
   if (process.browser) {

@@ -11,15 +11,15 @@
                 <form enctype="multipart/form-data" class="navbar-form form-inline v-m"  v-on:submit.prevent="" role="search">
                   <div class="form-group l-h m-a-0">
                     <div class="input-group">
-                      <textarea v-if="!is_image" v-model.trim="post.message" class="form-control form-control-sm b-a radius" placeholder="¿Qué está pasando?"></textarea>
+                      <textarea v-if="!isImage" v-model.trim="post.message" class="form-control form-control-sm b-a radius" placeholder="¿Qué está pasando?"></textarea>
                       <input v-else type="file" class="form-control" name="file" placeholder="Adjuntar archivo" accept="image/*" ref="image" @change="onFileChange($event)">    
                       <div class="control-btns">
-                        <div class="set_image"><input type="checkbox" v-model="is_image">Imagen</div>
+                        <div class="set_image"><input type="checkbox" v-model="isImage">Imagen</div>
                         <select v-model="post.scope" class="select-scope radius">
                           <option :value="0">Público</option>
                           <option :value="1">Amigos</option>
                         </select>
-                        <input v-if="!is_image" class="radius orange publishing-btn" type="submit" @click="newPost()" value="Publicar">
+                        <input v-if="!isImage" class="radius orange publishing-btn" type="submit" @click="newPost()" value="Publicar">
                         <input v-else class="radius orange publishing-btn" type="submit" @click="saveImage()" value="Publicar">
                       </div>
 
@@ -42,11 +42,15 @@
                         <input v-else type="file" class="form-control" name="updateImg" placeholder="Adjuntar archivo" accept="image/*" ref="image" @change="onFileChange($event)">   
                         <div class="post-date">{{ fromNowDate(post.created_date) }}</div>
                         <div class="post-actions">
-                          <template v-if="editing !== post.id">
+                          <template v-if="editing !== post.id && deleting !== post.id">
                             <button @click="editPost(post)" class="btn">Editar</button>
-                            <button @click="deletePost(post.id)" class="btn">Eliminar</button>
+                            <button @click="deleting = post.id" class="btn">Eliminar</button>
                           </template>
-                          <template v-else>
+                          <template v-if="deleting == post.id">
+                            <button @click="deletePost(post.id)" class="btn">Si, eliminar!</button>
+                            <button @click="deleting = ''" class="btn">Cancelar</button>
+                          </template>
+                          <template v-if="editing == post.id">
                             <button @click="updateImage()" class="btn">Guardar</button>
                           </template>
                           <div class="post-scope">{{ post.scope === 0 ? 'Público' : 'Amigos' }}</div>
@@ -57,11 +61,15 @@
                         <textarea class="post-editing" v-else v-model.trim="postEditing.message">{{post.message}}</textarea>
                         <div class="post-date">{{ fromNowDate(post.created_date) }}</div>
                         <div class="post-actions">
-                          <template v-if="editing !== post.id">
+                          <template v-if="editing !== post.id && deleting !== post.id">
                             <button @click="editPost(post)" class="btn">Editar</button>
-                            <button @click="deletePost(post.id)" class="btn">Eliminar</button>
+                            <button @click="deleting = post.id" class="btn">Eliminar</button>
                           </template>
-                          <template v-else>
+                          <template v-if="deleting == post.id">
+                            <button @click="deletePost(post.id)" class="btn">Si, eliminar!</button>
+                            <button @click="deleting = ''" class="btn">Cancelar</button>
+                          </template>
+                          <template v-if="editing == post.id">
                             <button @click="savePost()" class="btn">Guardar</button>
                           </template>
                           <div class="post-scope">{{ post.scope === 0 ? 'Público' : 'Amigos' }}</div>
@@ -99,14 +107,15 @@ export default {
         is_image: false
       },
       editing: '',
+      deleting: '',
       postEditing: null,
       filter: null,
-      is_image: false,
+      isImage: false,
       image: process.browser ? new FormData() : null
     }
   },
   created () {
-    this.$store.dispatch('fetchFeed')
+    this.reset()
   },
   watch: {
     filter: async function (val) {
@@ -122,7 +131,7 @@ export default {
           break
       }
     },
-    is_image: function (val) {
+    isImage: function (val) {
       this.post.is_image = val
     }
   },
@@ -136,8 +145,7 @@ export default {
       this.post.created_date = Date()
       const res = await this.$store.dispatch('createPost', this.post)
       if (!res.response) {
-        await this.$store.dispatch('fetchFeed')
-        this.posts = this.$store.state.feed
+        this.reset()
       }
     },
     fromNowDate (date) {
@@ -186,6 +194,26 @@ export default {
     removeFile: function (e) {
       this.$el.querySelector('input[type=file]').value = null
       this.image = new FormData()
+    },
+    async deletePost (id) {
+      const res = await this.$store.dispatch('deletePost', id)
+      if (res.status === 204) {
+        this.reset()
+      }
+    },
+    async reset () {
+      await this.$store.dispatch('fetchFeed')
+      this.editing = ''
+      this.deleting = ''
+      this.postEditing = null
+      this.filter = null
+      this.isImage = false
+      this.post = {
+        message: '',
+        scope: 0,
+        is_image: false
+      }
+      this.posts = this.$store.state.feed
     }
   }
 }
