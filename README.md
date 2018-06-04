@@ -1,6 +1,6 @@
 # laboratoria-js-teacher-test
 
-> Proyecto realizado bajo Vue JS + Vuex (Redux) + Nuxt (Server-Side-Render) + AVA/Cypress Testing
+> Proyecto realizado bajo Vue JS + Vuex (Redux) + Nuxt (Server-Side-Render) + AVA/Cypress Testing + LoopBack (Backend)
 > [DEMO Server](https://laboratoria-js-test.herokuapp.com)
 
 ## Build Setup
