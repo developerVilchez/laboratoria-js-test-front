@@ -18,6 +18,7 @@
     "@nuxtjs/font-awesome": "^1.0.3",
     "axios": "^0.17.1",
     "classlist.js": "lastest",
+    "express": "^4.16.3",
     "localStorage": "^1.0.3",
     "lodash": "^4.17.4",
     "moment": "^2.19.4",
