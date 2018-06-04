@@ -12,7 +12,8 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "precommit": "npm run lint",
     "spa": "nuxt build --spa",
-    "deploy": "git subtree push --prefix dist heroku master"
+    "deploy": "git subtree push --prefix dist heroku master",
+    "test": "ava"
   },
   "dependencies": {
     "@nuxtjs/font-awesome": "^1.0.3",
@@ -31,6 +32,7 @@
     "vuex-persistedstate": "^2.4.2"
   },
   "devDependencies": {
+    "ava": "^0.25.0",
     "babel-eslint": "^7.2.3",
     "eslint": "^4.3.0",
     "eslint-config-standard": "^10.2.1",
@@ -40,6 +42,7 @@
     "eslint-plugin-node": "^5.1.1",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
+    "jsdom": "^11.11.0",
     "node-sass": "^4.8.3",
     "sass-loader": "^7.0.1",
     "vue-style-loader": "^4.1.0"
@@ -48,5 +51,15 @@
     "globals": {
       "window": true
     }
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
   }
 }

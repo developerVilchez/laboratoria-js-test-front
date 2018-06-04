@@ -20,9 +20,8 @@
         <div class="alert alert-lightred" v-if="error">
             <strong>Error!</strong> {{ errorMessage }}. Su email o contraseña son incorrectos.
         </div>
-        <nuxt-link class="link-bold" to="/recuperar-contrasena" hreflang="es-pe">Olvidé contraseña</nuxt-link>
+        <!--<nuxt-link class="link-bold" to="/recuperar-contrasena" hreflang="es-pe">Olvidé contraseña</nuxt-link>-->
       </form>
-      <p class="text-center txt-link">¿No tienes un cuenta aún? <nuxt-link to="/registro" hreflang="es-pe">Crea una aquí</nuxt-link></p>
     </article>
   </section>
 </template>

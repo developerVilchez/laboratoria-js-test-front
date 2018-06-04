@@ -70,12 +70,12 @@ module.exports = {
     }
   },
   plugins: [
-  {
-    src: '~plugins/vee-validate', ssr: false
-  },
-  {
-    src: '~plugins/vuex-persistedstate.js', ssr: false
-  }],
+    {
+      src: '~plugins/vee-validate', ssr: false
+    },
+    {
+      src: '~plugins/vuex-persistedstate.js', ssr: false
+    }],
   modules: [
     '@nuxtjs/font-awesome'
   ]
