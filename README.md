@@ -20,7 +20,7 @@ $ npm start
 $ npm run generate
 
 # testing
-$ npm run cypress:open
+$ npm run cypress:open / npm run ava
 
 # Test Auth
 $ user: espinozasenior@gmail.com
