@@ -7,8 +7,7 @@ context('Local Storage', () => {
   // sometimes we need to clear the local storage manually
 
   it('cy.clearLocalStorage() - clear all data in local storage', () => {
-
-    // clearLocalStorage() yields the localStorage object
+    
     cy.clearLocalStorage().should((ls) => {
       expect(ls.getItem('token')).to.be.null
     })
