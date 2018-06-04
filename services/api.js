@@ -11,7 +11,7 @@ let api = axios.create({
   // It can be convenient to set `baseURL` for an instance of axios to pass relative URLs
   // to methods of that instance.
   // baseURL: process.env.API_LOCATION,
-  baseURL: 'http://localhost:4000/v1',
+  baseURL: process.env.NODE_ENV !== 'production' ? 'http://localhost:4000/v1' : 'https://kambista-v2.herokuapp.com/v1',
   // `headers` are custom headers to be sent
   headers: {
     'content-type': 'application/json; charset=utf-8',
