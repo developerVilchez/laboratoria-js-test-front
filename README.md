@@ -1,6 +1,7 @@
 # laboratoria-js-teacher-test
 
-> Nuxt.js project
+> Proyecto realizado bajo Vue JS + Vuex (Redux) + Nuxt (Server-Side-Render) + AVA/Cypress Testing
+> [DEMO Server](https://laboratoria-js-test.herokuapp.com)
 
 ## Build Setup
 
@@ -17,6 +18,13 @@ $ npm start
 
 # generate static project
 $ npm run generate
+
+# testing
+$ npm run cypress:open
+
+# Test Auth
+$ user: espinozasenior@gmail.com
+$ pass: 2486552
 ```
 
 For detailed explanation on how things work, checkout the [Nuxt.js docs](https://github.com/nuxt/nuxt.js).
