@@ -1,6 +1,6 @@
 import axios from 'axios'
 import api, { logout, createPost, fetchFeed, savePost, deletePost } from '@/services/api'
-const baseURL = 'http://localhost:4000/v1'
+const baseURL = process.env.NODE_ENV !== 'production' ? 'http://localhost:4000/v1' : 'https://laboratoria-back.herokuapp.com/v1'
 
 export const state = () => ({
   authUser: null,
