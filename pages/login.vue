@@ -1,18 +1,18 @@
 <template>
   <section class="hello">
     <article>
-      <form class="bg-white" v-on:submit.prevent="login()">
+      <form class="bg-white login-form" v-on:submit.prevent="login()">
         <div class="form-group">
           <div class="input-box">
             <i class="fa fa-at" aria-hidden="true"></i>
-            <input v-validate="'required|email'" name="email" placeholder="Correo Electronico" v-model.trim="user.email" type="email">
+            <input v-validate="'required|email'" name="email" class="input-email" placeholder="Correo Electronico" v-model.trim="user.email" type="email">
           </div>
           <span class="error_span">{{ errors.first('email') }}</span>
         </div>
         <div class="form-group">
           <div class="input-box">
             <i class="fa fa-lock" aria-hidden="true"></i>
-            <input v-validate="'required|min:4'" name="password" placeholder="Contraseña" v-model="user.password" type="password">
+            <input v-validate="'required|min:4'" class="input-password" name="password" placeholder="Contraseña" v-model="user.password" type="password">
           </div>
           <span class="error_span">{{ errors.first('password') }}</span>
         </div>
