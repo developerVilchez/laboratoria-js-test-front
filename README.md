@@ -1,7 +1,7 @@
 # laboratoria-js-teacher-test
 
 > Proyecto realizado bajo Vue JS + Vuex (Redux) + Nuxt (Server-Side-Render) + AVA/Cypress Testing + LoopBack (Backend)
-> [DEMO Server](https://laboratoria-js-test.herokuapp.com)
+> [DEMO Server](https://laboratoria-js-test.herokuapp.com) Por custiones de rapidez y tiempo decidí realizarlo bajo Framework Vue el cual es el que más domino y tiene una arquitectura bastante similar a la de React JS además de que implementa los esquemas antes mencionados que en esencia son los mismos que en React JS.
 
 ## Build Setup
 
